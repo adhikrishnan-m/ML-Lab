@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI - Medical Machine Learning Platform</title>
+    <meta name="description" content="Unified one-frame Medical Machine Learning web application for Brain Tumor MRI Detection: Preprocessing, GLCM Feature Extraction, ML Training, Evaluation, and Live Code Compiler.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Interactive Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12A10 10 0 0 1 12 2z"/>
+                        <path d="M12 6v6l4 2"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>NeuroScan <span class="accent-text">AI</span></h1>
+                    <span class="sub-text">Medical Machine Learning Image Analysis System</span>
+                </div>
+            </div>
+
+            <nav class="frame-nav">
+                <button class="nav-tab active" data-tab="pipeline-frame" id="tab-pipeline">
+                    <span class="tab-dot"></span> 1. One-Frame ML Pipeline
+                </button>
+                <button class="nav-tab" data-tab="training-frame" id="tab-training">
+                    <span class="tab-dot"></span> 2. Model Training & Evaluation
+                </button>
+                <button class="nav-tab" data-tab="compiler-frame" id="tab-compiler">
+                    <span class="tab-dot"></span> 3. Code Playground & Compiler
+                </button>
+            </nav>
+
+            <div class="system-status">
+                <span class="status-indicator"></span>
+                <span class="status-text" id="engine-status">Engine: Ready</span>
+                <div class="active-algo-tag" id="active-algo-badge">SVM (RBF)</div>
+            </div>
+        </header>
+
+        <!-- Main Frame Container -->
+        <main class="main-content">
+
+            <!-- ============================================================== -->
+            <!-- FRAME 1: UNIFIED ONE-FRAME MACHINE LEARNING PIPELINE           -->
+            <!-- Covers: Load Input Image -> Preprocessor -> Feature Extraction -->
+            <!-- -> Model Inference -> Performance Evaluation                   -->
+            <!-- ============================================================== -->
+            <section class="frame-section active" id="pipeline-frame">
+                <!-- Pipeline Stepper Tracker Bar -->
+                <div class="pipeline-stepper">
+                    <div class="step-node active" id="step-node-1">
+                        <span class="step-num">1</span>
+                        <div class="step-info"><span class="step-title">Input Image</span><span class="step-desc">Load MRI Scan</span></div>
+                    </div>
+                    <div class="step-line" id="step-line-1"></div>
+                    <div class="step-node" id="step-node-2">
+                        <span class="step-num">2</span>
+                        <div class="step-info"><span class="step-title">Preprocessor</span><span class="step-desc">Filter, CLAHE, Skull Mask</span></div>
+                    </div>
+                    <div class="step-line" id="step-line-2"></div>
+                    <div class="step-node" id="step-node-3">
+                        <span class="step-num">3</span>
+                        <div class="step-info"><span class="step-title">Feature Extraction</span><span class="step-desc">GLCM & Intensity Stats</span></div>
+                    </div>
+                    <div class="step-line" id="step-line-3"></div>
+                    <div class="step-node" id="step-node-4">
+                        <span class="step-num">4</span>
+                        <div class="step-info"><span class="step-title">ML Classifier</span><span class="step-desc">Inference Engine</span></div>
+                    </div>
+                    <div class="step-line" id="step-line-4"></div>
+                    <div class="step-node" id="step-node-5">
+                        <span class="step-num">5</span>
+                        <div class="step-info"><span class="step-title">Diagnosis & Evaluation</span><span class="step-desc">Clinical Report</span></div>
+                    </div>
+                </div>
+
+                <!-- One-Frame 3-Column Unified Grid -->
+                <div class="unified-grid">
+                    
+                    <!-- COLUMN 1: STAGE 1 (INPUT) & STAGE 4 (CLASSIFIER INFERENCE) -->
+                    <div class="grid-col col-left">
+                        
+                        <!-- STAGE 1: LOAD INPUT IMAGE -->
+                        <div class="panel-card" id="card-input-stage">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="badge-stage">Stage 1</span>
+                                    <h3>Load Input Image</h3>
+                                </div>
+                                <span class="badge-tag">DICOM / PNG / JPG</span>
+                            </div>
+
+                            <div class="panel-body">
+                                <!-- Upload Drop Zone -->
+                                <div class="upload-dropzone" id="dropzone">
+                                    <input type="file" id="file-input" accept="image/*" class="file-hidden">
+                                    <div class="dropzone-content">
+                                        <svg class="upload-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        <p class="dropzone-text"><strong>Click to upload</strong> or drag & drop MRI scan</p>
+                                        <span class="dropzone-sub">Axial Brain MRI (T1, T2, FLAIR)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Preset Quick Samples -->
+                                <div class="samples-selector">
+                                    <div class="samples-label">Or Select Pre-Loaded Clinical Sample:</div>
+                                    <div class="sample-pills" id="sample-pills-container">
+                                        <!-- Dynamically loaded pills -->
+                                        <button class="sample-pill" data-sample="tumor_glioma_sample.png">Glioma Tumor</button>
+                                        <button class="sample-pill" data-sample="tumor_meningioma_sample.png">Meningioma</button>
+                                        <button class="sample-pill" data-sample="tumor_pituitary_sample.png">Pituitary</button>
+                                        <button class="sample-pill active" data-sample="normal_sample_1.png">Normal Scan A</button>
+                                        <button class="sample-pill" data-sample="normal_sample_2.png">Normal Scan B</button>
+                                    </div>
+                                </div>
+
+                                <!-- Action Button -->
+                                <button class="btn btn-primary btn-block" id="btn-run-pipeline">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"/>
+                                    </svg>
+                                    Execute 5-Step ML Pipeline
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- STAGE 4 & 5: CLINICAL DIAGNOSIS VERDICT -->
+                        <div class="panel-card" id="card-verdict-stage">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="badge-stage">Stage 4 & 5</span>
+                                    <h3>Clinical Diagnosis Verdict</h3>
+                                </div>
+                                <span class="badge-model" id="verdict-model-name">SVM (RBF)</span>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="diagnosis-banner" id="diagnosis-banner">
+                                    <div class="diagnosis-icon" id="diagnosis-icon">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="12" y1="8" x2="12" y2="12"/>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                        </svg>
+                                    </div>
+                                    <div class="diagnosis-info">
+                                        <span class="diagnosis-label" id="diagnosis-label">Analyzing...</span>
+                                        <span class="diagnosis-desc" id="diagnosis-desc">Load an image to run diagnostic evaluation</span>
+                                    </div>
+                                    <div class="diagnosis-confidence">
+                                        <span class="conf-val" id="diagnosis-conf">--%</span>
+                                        <span class="conf-lbl">Confidence</span>
+                                    </div>
+                                </div>
+
+                                <!-- Probability Breakdown Bar -->
+                                <div class="prob-container">
+                                    <div class="prob-header">
+                                        <span>Class Probability Distribution</span>
+                                        <span id="prob-ratio">Normal: --% | Tumor: --%</span>
+                                    </div>
+                                    <div class="prob-bar-track">
+                                        <div class="prob-bar-normal" id="bar-normal" style="width: 50%;"></div>
+                                        <div class="prob-bar-tumor" id="bar-tumor" style="width: 50%;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Key Findings List -->
+                                <div class="findings-list">
+                                    <div class="finding-item">
+                                        <span class="finding-title">ROI Candidate Detected:</span>
+                                        <span class="finding-val" id="finding-roi">--</span>
+                                    </div>
+                                    <div class="finding-item">
+                                        <span class="finding-title">Tumor Area:</span>
+                                        <span class="finding-val" id="finding-area">-- px</span>
+                                    </div>
+                                    <div class="finding-item">
+                                        <span class="finding-title">Bounding Coordinates:</span>
+                                        <span class="finding-val" id="finding-bbox">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- COLUMN 2: STAGE 2 (PREPROCESSOR MULTI-STAGE FILMSTRIP & OVERLAY) -->
+                    <div class="grid-col col-center">
+                        <div class="panel-card full-height" id="card-preprocess-stage">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="badge-stage">Stage 2</span>
+                                    <h3>Preprocessor Visual Pipeline</h3>
+                                </div>
+                                <div class="view-switch-btns">
+                                    <button class="btn-chip active" id="view-mode-grid">Grid View</button>
+                                    <button class="btn-chip" id="view-mode-focus">ROI Focus</button>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <!-- Large Stage Focus Viewer -->
+                                <div class="focus-viewer" id="focus-viewer-container">
+                                    <div class="focus-image-wrapper">
+                                        <img id="main-display-img" src="/static/samples/normal_sample_1.png" alt="Medical MRI Preprocessing Display">
+                                        <div class="overlay-badge" id="focus-stage-title">Original Axial MRI Scan</div>
+                                    </div>
+                                </div>
+
+                                <!-- 6-Stage Filmstrip Thumbnails -->
+                                <div class="filmstrip-label">Intermediate Preprocessing Stages (Click to Inspect):</div>
+                                <div class="filmstrip-grid">
+                                    <div class="stage-thumb active" data-stage="original" title="1. Original Resized Image">
+                                        <img id="thumb-original" src="/static/samples/normal_sample_1.png" alt="Original">
+                                        <span>1. Original</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="grayscale" title="2. Grayscale Intensity">
+                                        <img id="thumb-grayscale" src="" alt="Grayscale">
+                                        <span>2. Grayscale</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="gaussian_blur" title="3. Gaussian Noise Filter (5x5)">
+                                        <img id="thumb-blur" src="" alt="Gaussian Blur">
+                                        <span>3. Gaussian Blur</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="clahe" title="4. CLAHE Contrast Enhanced">
+                                        <img id="thumb-clahe" src="" alt="CLAHE">
+                                        <span>4. CLAHE</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="brain_mask" title="5. Otsu Skull/Brain Mask">
+                                        <img id="thumb-mask" src="" alt="Brain Mask">
+                                        <span>5. Otsu Mask</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="tumor_mask" title="6. Abnormal Hotspot Mask">
+                                        <img id="thumb-tumor" src="" alt="Tumor Mask">
+                                        <span>6. ROI Mask</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="heatmap" title="7. Intensity Jet Heatmap">
+                                        <img id="thumb-heatmap" src="" alt="Heatmap">
+                                        <span>7. Heatmap</span>
+                                    </div>
+                                    <div class="stage-thumb" data-stage="overlay" title="8. Diagnostic Localization Overlay">
+                                        <img id="thumb-overlay" src="" alt="Overlay">
+                                        <span>8. ROI Overlay</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMN 3: STAGE 3 (FEATURE EXTRACTION) & RADAR CHART -->
+                    <div class="grid-col col-right">
+                        
+                        <!-- STAGE 3: FEATURE EXTRACTION -->
+                        <div class="panel-card" id="card-feature-stage">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="badge-stage">Stage 3</span>
+                                    <h3>Feature Extraction</h3>
+                                </div>
+                                <span class="badge-tag">17 Medical Features</span>
+                            </div>
+
+                            <div class="panel-body">
+                                <!-- Feature Category Tabs -->
+                                <div class="sub-tabs">
+                                    <button class="sub-tab active" data-sub="glcm">GLCM Texture</button>
+                                    <button class="sub-tab" data-sub="intensity">Intensity Stats</button>
+                                    <button class="sub-tab" data-sub="shape">Shape & Area</button>
+                                </div>
+
+                                <!-- Subpanel: GLCM Texture Features -->
+                                <div class="subpanel active" id="subpanel-glcm">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Haralick Feature</th>
+                                                <th>Extracted Value</th>
+                                                <th>Clinical Meaning</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="glcm-table-body">
+                                            <tr><td>Contrast</td><td class="num-cell" id="f-contrast">--</td><td>Local intensity variance</td></tr>
+                                            <tr><td>Dissimilarity</td><td class="num-cell" id="f-dissimilarity">--</td><td>Pairwise differences</td></tr>
+                                            <tr><td>Homogeneity</td><td class="num-cell" id="f-homogeneity">--</td><td>Tissue uniformity</td></tr>
+                                            <tr><td>Energy</td><td class="num-cell" id="f-energy">--</td><td>Orderliness of tissue</td></tr>
+                                            <tr><td>Correlation</td><td class="num-cell" id="f-correlation">--</td><td>Gray level linear dependency</td></tr>
+                                            <tr><td>ASM</td><td class="num-cell" id="f-asm">--</td><td>Angular second moment</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Subpanel: Intensity Stats -->
+                                <div class="subpanel" id="subpanel-intensity">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Value</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="intensity-table-body">
+                                            <tr><td>Mean Intensity</td><td class="num-cell" id="f-mean">--</td><td>Average brightness</td></tr>
+                                            <tr><td>Standard Deviation</td><td class="num-cell" id="f-std">--</td><td>Intensity dispersion</td></tr>
+                                            <tr><td>Variance</td><td class="num-cell" id="f-variance">--</td><td>Spread of distribution</td></tr>
+                                            <tr><td>Skewness</td><td class="num-cell" id="f-skewness">--</td><td>Asymmetry of histogram</td></tr>
+                                            <tr><td>Kurtosis</td><td class="num-cell" id="f-kurtosis">--</td><td>Histogram peakedness</td></tr>
+                                            <tr><td>Shannon Entropy</td><td class="num-cell" id="f-entropy">--</td><td>Information disorder</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Subpanel: Shape & Morphological -->
+                                <div class="subpanel" id="subpanel-shape">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Morphological Metric</th>
+                                                <th>Value</th>
+                                                <th>Significance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="shape-table-body">
+                                            <tr><td>Tumor Area</td><td class="num-cell" id="f-area">--</td><td>Abnormal pixel count</td></tr>
+                                            <tr><td>Perimeter</td><td class="num-cell" id="f-perimeter">--</td><td>Contour boundary px</td></tr>
+                                            <tr><td>Circularity</td><td class="num-cell" id="f-circularity">--</td><td>Roundness (1.0 = circle)</td></tr>
+                                            <tr><td>Solidity</td><td class="num-cell" id="f-solidity">--</td><td>Area / Convex Hull</td></tr>
+                                            <tr><td>Brain Area %</td><td class="num-cell" id="f-ratio">--</td><td>Ratio to parenchyma</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Feature Radar Visualization -->
+                                <div class="chart-container-sm">
+                                    <canvas id="featureRadarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- FRAME 2: MODEL TRAINING & PERFORMANCE EVALUATION              -->
+            <!-- Covers: Training Algorithms, Hyperparameters, Accuracy,       -->
+            <!-- Confusion Matrix, ROC-AUC Curve, Feature Importance           -->
+            <!-- ============================================================== -->
+            <section class="frame-section" id="training-frame">
+                <div class="training-container">
+                    
+                    <!-- Training Control Box -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <span class="badge-stage">Stage 4</span>
+                                <h3>Machine Learning Model Training</h3>
+                            </div>
+                            <span class="badge-tag">Cross-Validation & Hyperparameters</span>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="select-algorithm">Algorithm Architecture:</label>
+                                    <select id="select-algorithm" class="form-control">
+                                        <option value="SVM (RBF)" selected>Support Vector Machine (RBF Kernel)</option>
+                                        <option value="SVM (Linear)">Support Vector Machine (Linear Kernel)</option>
+                                        <option value="Random Forest">Random Forest Classifier (Ensemble)</option>
+                                        <option value="K-Nearest Neighbors">K-Nearest Neighbors (KNN)</option>
+                                        <option value="Logistic Regression">Logistic Regression (L2 Regularized)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="input-test-split">Train / Test Split Ratio:</label>
+                                    <select id="input-test-split" class="form-control">
+                                        <option value="0.20">80% Train / 20% Test</option>
+                                        <option value="0.25" selected>75% Train / 25% Test</option>
+                                        <option value="0.30">70% Train / 30% Test</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="group-c-val">
+                                    <label for="input-c-val">Regularization C: <span id="val-c-display">1.0</span></label>
+                                    <input type="range" id="input-c-val" min="0.1" max="10.0" step="0.1" value="1.0" class="range-slider">
+                                </div>
+
+                                <div class="form-group" id="group-estimators" style="display:none;">
+                                    <label for="input-n-estimators">Number of Trees: <span id="val-trees-display">100</span></label>
+                                    <input type="range" id="input-n-estimators" min="20" max="300" step="10" value="100" class="range-slider">
+                                </div>
+
+                                <div class="form-group" id="group-neighbors" style="display:none;">
+                                    <label for="input-k-neighbors">K Neighbors: <span id="val-k-display">5</span></label>
+                                    <input type="range" id="input-k-neighbors" min="1" max="15" step="2" value="5" class="range-slider">
+                                </div>
+                            </div>
+
+                            <div class="train-actions">
+                                <button class="btn btn-accent" id="btn-train-model">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="23 4 23 10 17 10"/>
+                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                                    </svg>
+                                    Train Classifier On MRI Dataset
+                                </button>
+                                <span class="train-feedback" id="train-feedback">Ready to train</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Dashboard Grid -->
+                    <div class="eval-grid">
+                        
+                        <!-- Metric Cards -->
+                        <div class="metric-tiles">
+                            <div class="metric-tile accent-cyan">
+                                <span class="metric-label">Testing Accuracy</span>
+                                <span class="metric-value" id="eval-acc">--%</span>
+                                <span class="metric-sub">(TP + TN) / Total</span>
+                            </div>
+                            <div class="metric-tile accent-blue">
+                                <span class="metric-label">Precision</span>
+                                <span class="metric-value" id="eval-prec">--%</span>
+                                <span class="metric-sub">TP / (TP + FP)</span>
+                            </div>
+                            <div class="metric-tile accent-emerald">
+                                <span class="metric-label">Recall / Sensitivity</span>
+                                <span class="metric-value" id="eval-rec">--%</span>
+                                <span class="metric-sub">TP / (TP + FN)</span>
+                            </div>
+                            <div class="metric-tile accent-purple">
+                                <span class="metric-label">Specificity</span>
+                                <span class="metric-value" id="eval-spec">--%</span>
+                                <span class="metric-sub">TN / (TN + FP)</span>
+                            </div>
+                            <div class="metric-tile accent-amber">
+                                <span class="metric-label">F1-Score</span>
+                                <span class="metric-value" id="eval-f1">--%</span>
+                                <span class="metric-sub">Harmonic Mean</span>
+                            </div>
+                            <div class="metric-tile accent-rose">
+                                <span class="metric-label">ROC - AUC</span>
+                                <span class="metric-value" id="eval-auc">--</span>
+                                <span class="metric-sub">Area Under Curve</span>
+                            </div>
+                        </div>
+
+                        <!-- Confusion Matrix & ROC Charts -->
+                        <div class="eval-charts-row">
+                            
+                            <!-- Confusion Matrix Panel -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <div class="panel-title">
+                                        <span class="badge-stage">Stage 5</span>
+                                        <h3>Confusion Matrix</h3>
+                                    </div>
+                                    <span class="badge-tag">Evaluation Heatmap</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="cm-wrapper">
+                                        <div class="cm-axis-y">Actual Class</div>
+                                        <div class="cm-container">
+                                            <div class="cm-axis-x">Predicted Class</div>
+                                            <div class="cm-labels-top">
+                                                <span>Normal (Pred)</span>
+                                                <span>Tumor (Pred)</span>
+                                            </div>
+                                            <div class="cm-grid">
+                                                <div class="cm-row">
+                                                    <span class="cm-row-label">Normal (Act)</span>
+                                                    <div class="cm-cell cell-tn" id="cm-cell-tn">
+                                                        <span class="cm-val" id="cm-tn">--</span>
+                                                        <span class="cm-desc">True Negative (TN)</span>
+                                                    </div>
+                                                    <div class="cm-cell cell-fp" id="cm-cell-fp">
+                                                        <span class="cm-val" id="cm-fp">--</span>
+                                                        <span class="cm-desc">False Positive (FP)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="cm-row">
+                                                    <span class="cm-row-label">Tumor (Act)</span>
+                                                    <div class="cm-cell cell-fn" id="cm-cell-fn">
+                                                        <span class="cm-val" id="cm-fn">--</span>
+                                                        <span class="cm-desc">False Negative (FN)</span>
+                                                    </div>
+                                                    <div class="cm-cell cell-tp" id="cm-cell-tp">
+                                                        <span class="cm-val" id="cm-tp">--</span>
+                                                        <span class="cm-desc">True Positive (TP)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ROC Curve Chart -->
+                            <div class="panel-card">
+                                <div class="panel-header">
+                                    <div class="panel-title">
+                                        <span class="badge-stage">Stage 5</span>
+                                        <h3>ROC Curve (Receiver Operating Characteristic)</h3>
+                                    </div>
+                                    <span class="badge-tag" id="roc-auc-badge">AUC: --</span>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="chart-container-md">
+                                        <canvas id="rocChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================== -->
+            <!-- FRAME 3: LIVE CODE PLAYGROUND, COMPILER & CLI GUIDE           -->
+            <!-- User feature: "implementation where i can type the program    -->
+            <!-- how to compile and run the code ."                            -->
+            <!-- ============================================================== -->
+            <section class="frame-section" id="compiler-frame">
+                <div class="compiler-container">
+                    
+                    <!-- Left: Code Editor & Runner -->
+                    <div class="editor-col">
+                        <div class="panel-card full-height">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="16 18 22 12 16 6"/>
+                                        <polyline points="8 6 2 12 8 18"/>
+                                    </svg>
+                                    <h3>Interactive Python Code Playground & Compiler</h3>
+                                </div>
+                                <div class="template-selector">
+                                    <label for="code-template-select">Template:</label>
+                                    <select id="code-template-select" class="form-control-sm">
+                                        <option value="pipeline" selected>Complete 5-Stage Pipeline</option>
+                                        <option value="preprocess">Stage 2: Preprocessing (OpenCV)</option>
+                                        <option value="features">Stage 3: GLCM Feature Extraction</option>
+                                        <option value="train">Stage 4 & 5: Model Training & Evaluation</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="panel-body flex-col">
+                                <p class="code-intro">
+                                    Type, modify, or experiment with your Python program below. Click <strong>"Compile & Run Code"</strong> to execute it live and view output in the console.
+                                </p>
+
+                                <div class="editor-wrapper">
+                                    <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+                                </div>
+
+                                <div class="editor-actions">
+                                    <button class="btn btn-success" id="btn-run-code">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polygon points="5 3 19 12 5 21 5 3"/>
+                                        </svg>
+                                        Compile & Run Code
+                                    </button>
+                                    <button class="btn btn-secondary" id="btn-reset-code">Reset Template</button>
+                                    <span class="exec-status" id="exec-status">Idle</span>
+                                </div>
+
+                                <!-- Terminal Output Window -->
+                                <div class="terminal-card">
+                                    <div class="terminal-bar">
+                                        <div class="terminal-dots">
+                                            <span class="dot red"></span>
+                                            <span class="dot yellow"></span>
+                                            <span class="dot green"></span>
+                                        </div>
+                                        <span class="terminal-title">Console Output (stdout / stderr)</span>
+                                        <span class="terminal-timing" id="exec-timing">Elapsed: 0.00s</span>
+                                    </div>
+                                    <pre class="terminal-output" id="terminal-output">Ready. Click "Compile & Run Code" above to execute.</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Step-by-Step Compilation & Run Instructions -->
+                    <div class="guide-col">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                    </svg>
+                                    <h3>How to Compile & Run the Code (Guide)</h3>
+                                </div>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="guide-steps">
+                                    
+                                    <div class="guide-step">
+                                        <div class="guide-num">1</div>
+                                        <div class="guide-content">
+                                            <h4>Install Dependencies</h4>
+                                            <p>Open Windows PowerShell or Command Prompt in the project folder and run:</p>
+                                            <div class="copy-box">
+                                                <code>pip install -r requirements.txt</code>
+                                                <button class="btn-copy" data-copy="pip install -r requirements.txt">Copy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="guide-step">
+                                        <div class="guide-num">2</div>
+                                        <div class="guide-content">
+                                            <h4>Run Web Application Dashboard</h4>
+                                            <p>Start the Flask web server covering all stages in one frame:</p>
+                                            <div class="copy-box">
+                                                <code>python app.py</code>
+                                                <button class="btn-copy" data-copy="python app.py">Copy</button>
+                                            </div>
+                                            <p class="guide-sub">Then open your browser to: <a href="http://127.0.0.1:5050" target="_blank">http://127.0.0.1:5050</a></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="guide-step">
+                                        <div class="guide-num">3</div>
+                                        <div class="guide-content">
+                                            <h4>Compile / Train Classifier via Terminal</h4>
+                                            <p>Train and save the ML model with cross-validation metrics:</p>
+                                            <div class="copy-box">
+                                                <code>python train_cli.py --algo "SVM" --c 1.0</code>
+                                                <button class="btn-copy" data-copy="python train_cli.py --algo SVM --c 1.0">Copy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="guide-step">
+                                        <div class="guide-num">4</div>
+                                        <div class="guide-content">
+                                            <h4>Evaluate Performance via Terminal</h4>
+                                            <p>Compute Confusion Matrix, Accuracy, and Classification Report:</p>
+                                            <div class="copy-box">
+                                                <code>python evaluate_cli.py</code>
+                                                <button class="btn-copy" data-copy="python evaluate_cli.py">Copy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="guide-step">
+                                        <div class="guide-num">5</div>
+                                        <div class="guide-content">
+                                            <h4>Predict Single MRI Image</h4>
+                                            <p>Run inference on any MRI scan file:</p>
+                                            <div class="copy-box">
+                                                <code>python predict_cli.py --image "static/samples/tumor_glioma_sample.png"</code>
+                                                <button class="btn-copy" data-copy="python predict_cli.py --image static/samples/tumor_glioma_sample.png">Copy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
